@@ -1,7 +1,7 @@
 export class Point {
   constructor(x, y) {
-    this.x = x?.x || x || 0;
-    this.y = y || x?.y || 0;
+    this.x = (x?.x !== undefined ? x.x : x) || 0;
+    this.y = (y !== undefined ? y : x?.y) || 0;
   }
 
   add(point) {

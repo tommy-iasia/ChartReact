@@ -1,0 +1,5 @@
+@import "./utilities/utility.scss";
+
+.app {
+  @include flex-center;
+}

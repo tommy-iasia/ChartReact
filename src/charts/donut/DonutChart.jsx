@@ -1,9 +1,9 @@
 import _ from "lodash";
 import { DonutChartContext } from "./DonutChartContext";
 import DonutGraph from "./DonutGraph";
-import { ease } from "./easing";
+import { ease } from "../easing";
 import PropTypes from "prop-types";
-import { useInterval } from "../utilities/effect";
+import { useInterval } from "../../utilities/effect";
 import { useState } from "react";
 
 import "./DonutChart.scss";
