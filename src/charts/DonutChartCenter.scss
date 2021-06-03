@@ -1,0 +1,10 @@
+@import "../utilities/utility.scss";
+
+.donut-chart-center {
+  position: absolute;
+  @include flex-center;
+
+  &.readonly {
+    pointer-events: none;
+  }
+}

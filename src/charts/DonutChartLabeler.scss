@@ -1,0 +1,10 @@
+.donut-chart-labeler {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+
+  > svg {
+    position: absolute;
+  }
+}

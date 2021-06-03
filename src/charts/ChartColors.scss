@@ -1,0 +1,15 @@
+@import "./chart-colors.scss";
+
+@use "scss:map";
+
+@for $i from 1 through 10 {
+  #chart-color-#{$i} {
+    stop:nth-child(1) {
+      stop-color: map-get(map-get($chart-colors, $i), start);
+    }
+
+    stop:nth-child(2) {
+      stop-color: map-get(map-get($chart-colors, $i), end);
+    }
+  }
+}
