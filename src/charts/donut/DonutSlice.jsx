@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Point } from "./Point";
+import { Point } from "../Point";
 
 import "./DonutSlice.scss";
 

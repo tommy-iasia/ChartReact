@@ -1,6 +1,6 @@
-import DonutChart from "./charts/DonutChart";
-import DonutChartCenter from "./charts/DonutChartCenter";
-import DonutChartLabeler from "./charts/DonutChartLabeler";
+import DonutChart from "./charts/donut/DonutChart";
+import DonutChartCenter from "./charts/donut/DonutChartCenter";
+import DonutChartLabeler from "./charts/donut/DonutChartLabeler";
 import { useState } from "react";
 
 import "./App.scss";

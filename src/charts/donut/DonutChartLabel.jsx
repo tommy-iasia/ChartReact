@@ -1,4 +1,4 @@
-import { Point } from "./Point";
+import { Point } from "../Point";
 import PropTypes from "prop-types";
 
 import "./DonutChartLabel.scss";

@@ -1,9 +1,9 @@
 import _ from "lodash";
 import { DonutChartContext } from "./DonutChartContext";
 import DonutChartLabel from "./DonutChartLabel";
-import { Point } from "./Point";
+import { Point } from "../Point";
 import PropTypes from "prop-types";
-import { Rectangle } from "./Rectangle";
+import { Rectangle } from "../Rectangle";
 import { useContext } from "react";
 
 import "./DonutChartLabeler.scss";

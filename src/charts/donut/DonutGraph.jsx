@@ -1,8 +1,8 @@
-import ChartColors from "./ChartColors";
+import ChartColors from "../ChartColors";
 import DonutSlice from "./DonutSlice";
-import { Point } from "./Point";
+import { Point } from "../Point";
 import PropTypes from "prop-types";
-import { Rectangle } from "./Rectangle";
+import { Rectangle } from "../Rectangle";
 import { useRef } from "react";
 
 export default function DonutGraph(props) {
