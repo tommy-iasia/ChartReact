@@ -1,9 +1,7 @@
-import _ from "lodash";
+import DonutChartAnimator from "./DonutChartAnimator";
 import { DonutChartContext } from "./DonutChartContext";
 import DonutGraph from "./DonutGraph";
-import { ease } from "../easing";
 import PropTypes from "prop-types";
-import { useInterval } from "../../utilities/effect";
 import { useState } from "react";
 
 import "./DonutChart.scss";
@@ -13,40 +11,25 @@ export default function DonutChart(props) {
   const { items, activeItems, setActiveItem } = props;
   const { children } = props;
 
-  const [progress, setProgress] = useState(0);
-  useInterval(() => progress < 1 && setProgress(Math.min(progress + 0.02, 1)), 10);
-
-  const easedProgress = ease(progress);
-
-  const total = _.sumBy(items, (t) => t.value);
-  const { slices } = items.reduce(
-    (s, t) => {
-      const angle = 359.9 * (t.value / total);
-      return {
-        angle: s.angle + angle,
-        slices: [
-          ...s.slices,
-          {
-            item: t,
-            fromAngle: s.angle,
-            toAngle: s.angle + angle * easedProgress,
-            active: activeItems?.includes(t),
-          },
-        ],
-      };
-    },
-    { angle: 0, slices: [] }
-  );
+  const [slices, setSlices] = useState([]);
+  const activedSlices = slices.map((t) => ({
+    ...t,
+    active: activeItems?.includes(t.item),
+  }));
 
   return (
     <div className="donut-chart" style={{ width, height }}>
-      <DonutChartContext.Provider value={{ width, height, outerRadius, innerRadius, slices }}>
+      <DonutChartAnimator items={items} setSlices={setSlices} />
+
+      <DonutChartContext.Provider
+        value={{ width, height, outerRadius, innerRadius, slices: activedSlices }}
+      >
         <DonutGraph
           width={width}
           height={height}
           outerRadius={outerRadius}
           innerRadius={innerRadius}
-          slices={slices}
+          slices={activedSlices}
           setActive={(t) => setActiveItem?.(t?.item)}
         />
 

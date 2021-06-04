@@ -1,5 +1,5 @@
 import ChartColors from "../ChartColors";
-import DonutSlice from "./DonutSlice";
+import DonutGraphSlice from "./DonutGraphSlice";
 import { Point } from "../Point";
 import PropTypes from "prop-types";
 import { Rectangle } from "../Rectangle";
@@ -41,7 +41,7 @@ export default function DonutGraph(props) {
 
       {slices.map((t, i) => {
         return (
-          <DonutSlice
+          <DonutGraphSlice
             key={i}
             className={t.active ? "active" : ""}
             center={center}
