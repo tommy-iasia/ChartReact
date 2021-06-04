@@ -1,0 +1,9 @@
+.spline-graph-line {
+  @for $i from 1 through 10 {
+    &:nth-of-type(10n + #{$i}) {
+      stroke: url(#chart-color-#{$i});
+      fill: none;
+      stroke-width: 2;
+    }
+  }
+}

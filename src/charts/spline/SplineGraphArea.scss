@@ -1,0 +1,8 @@
+.spline-graph-area {
+  @for $i from 1 through 10 {
+    &:nth-of-type(10n + #{$i}) {
+      fill: url(#chart-color-#{$i});
+      opacity: 0.6;
+    }
+  }
+}

@@ -17,7 +17,10 @@ export class Point {
   }
 
   multiply(value) {
-    return new Point(this.x * (value.x || value || 0), this.y * (value.y || value || 0));
+    return new Point(
+      this.x * ((value?.x !== undefined ? value.x : value) || 0),
+      this.y * ((value.y !== undefined ? value.y : value) || 0)
+    );
   }
 
   length() {

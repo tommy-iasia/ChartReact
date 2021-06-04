@@ -1,0 +1,26 @@
+@import "../../utilities/utility.scss";
+
+.spline-chart {
+  position: relative;
+
+  .spline-graph {
+    @include absolute-fill;
+    z-index: 3;
+  }
+
+  .spline-chart-axes {
+    z-index: 4;
+  }
+
+  .spline-chart-shadow {
+    z-index: 1;
+  }
+
+  .spline-chart-grid {
+    z-index: 2;
+  }
+
+  .spline-chart-pointer {
+    z-index: 5;
+  }
+}

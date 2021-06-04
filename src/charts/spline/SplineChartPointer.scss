@@ -1,0 +1,56 @@
+@import "../../utilities/utility.scss";
+
+.spline-chart-pointer {
+  @include absolute-fill;
+  cursor: none;
+
+  > .line {
+    position: absolute;
+    width: 1px;
+    background-color: rgba(#626176, 0.6);
+  }
+
+  > .point {
+    position: absolute;
+
+    &::before {
+      position: absolute;
+      left: -7px;
+      top: -7px;
+      width: 14px;
+      height: 14px;
+      border-radius: 7px;
+      background-color: rgba(#626176, 0.3);
+      content: "";
+    }
+
+    &::after {
+      position: absolute;
+      left: -3px;
+      top: -3px;
+      width: 6px;
+      height: 6px;
+      border-radius: 3px;
+      background-color: rgba(#626176, 0.3);
+      content: "";
+    }
+
+    > .label {
+      position: absolute;
+      top: 0;
+      transform: translateY(-50%);
+
+      &.left {
+        right: 10px;
+      }
+
+      &.right {
+        left: 10px;
+      }
+    }
+  }
+
+  &:not(.active) {
+    opacity: 0;
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function useAsync(func, dependencies) {
   useEffect(
@@ -26,34 +26,22 @@ export function useTimeout(func, length, dependencies) {
   );
 }
 
-export function useInterval(func, interval, dependencies) {
-  useEffect(
-    () => {
-      const handle = {
-        value: undefined,
-        cleared: false,
-      };
+export function useInterval(callback, interval) {
+  const savedCallback = useRef(callback);
 
-      const tryClear = () => {
-        if (handle.cleared) {
-          return;
-        }
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
 
-        clearTimeout(handle.value);
+  useEffect(() => {
+    if (interval === null) {
+      return;
+    }
 
-        handle.cleared = false;
-      };
+    const id = setInterval(() => savedCallback.current(), interval);
 
-      handle.value = setInterval(() => {
-        const $continue = func();
-        if ($continue === false) {
-          tryClear();
-        }
-      }, interval);
-
-      return tryClear;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    dependencies
-  );
+    return () => clearInterval(id);
+  }, [interval]);
 }
+
+export default useInterval;

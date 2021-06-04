@@ -1,0 +1,19 @@
+@import "../../utilities/utility.scss";
+
+.spline-chart-grid {
+  @include absolute-fill;
+
+  .x,
+  .y {
+    position: absolute;
+    background-color: #eee;
+  }
+
+  .x {
+    width: 1px;
+  }
+
+  .y {
+    height: 1px;
+  }
+}
