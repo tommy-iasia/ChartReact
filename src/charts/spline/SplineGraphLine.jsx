@@ -31,14 +31,29 @@ export function getPath(points) {
 
 function getControls(points) {
   return zipBeforeAfter(points).map(({ before, current, after }) => {
-    const direction = (after || current).minus(before || current);
-    const anchor = direction.multiply(0.3);
-    return {
-      point: current,
-      before: current.minus(anchor),
-      after: current.add(anchor),
-      direction: direction,
-    };
+    const forward =
+      (current.y > before?.y && after?.y > current.y) ||
+      (current.y < before?.y && after?.y < current.y);
+
+    if (forward) {
+      const direction = (after || current).minus(before || current);
+      const anchor = direction.multiply(0.1);
+      return {
+        point: current,
+        before: current.minus(anchor),
+        after: current.add(anchor),
+        direction: direction,
+      };
+    } else {
+      const beforeX = before?.x || current.x;
+      const afterX = after?.x || current.x;
+      return {
+        point: current,
+        before: current.minus(new Point((current.x - beforeX) * 0.5, 0)),
+        after: current.add(new Point((afterX - current.x) * 0.5, 0)),
+        direction: new Point(afterX - beforeX, 0),
+      };
+    }
   });
 }
 
