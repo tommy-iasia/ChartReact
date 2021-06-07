@@ -43,5 +43,3 @@ export function useInterval(callback, interval) {
     return () => clearInterval(id);
   }, [interval]);
 }
-
-export default useInterval;
