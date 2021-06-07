@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { ease } from "../easing";
+import PropTypes from "prop-types";
 import { useInterval } from "../../utilities/effect";
 import { useEffect, useState } from "react";
 
@@ -15,6 +16,7 @@ export default function DonutChartAnimator(props) {
         slices: [
           ...s.slices,
           {
+            key: t.key || "",
             item: t,
             fromAngle: s.angle,
             toAngle: s.angle + angle,
@@ -30,14 +32,12 @@ export default function DonutChartAnimator(props) {
 
   const [afterSlices, setAfterSlices] = useState(newSlices);
 
-  const changed =
-    newSlices.length !== afterSlices.length ||
-    _.zip(newSlices, afterSlices).some(
-      ([s, t]) => s.item !== t.item && s.fromAngle !== t.fromAngle && s.toAngle !== t.toAngle
-    );
+  const getVersionText = (slices) => {
+    const texts = slices.map((t) => `${t.key}: ${t.fromAngle} - ${t.toAngle}`);
+    return texts.join(", ");
+  };
 
-  const [lastVersion, setLastVersion] = useState(0);
-  const nextVersion = lastVersion + (changed ? 1 : 0);
+  const newSlicesText = getVersionText(newSlices);
 
   const [progress, setProgress] = useState(0);
   useInterval(() => {
@@ -48,7 +48,7 @@ export default function DonutChartAnimator(props) {
 
   const easedProgress = ease(progress);
   const nextSlices = _.zip(beforeSlices, afterSlices).map(([s, t]) => ({
-    item: t.item,
+    ...t,
     fromAngle: (t.fromAngle - s.fromAngle) * easedProgress + s.fromAngle,
     toAngle: (t.toAngle - s.toAngle) * easedProgress + s.toAngle,
   }));
@@ -68,18 +68,25 @@ export default function DonutChartAnimator(props) {
       setAfterSlices(newSlices);
 
       setProgress(0);
-
-      setLastVersion(nextVersion);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nextVersion]
+    [newSlicesText]
   );
 
   useEffect(
     () => setSlices(nextSlices),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [beforeSlices, afterSlices, progress]
+    [beforeSlices, afterSlices, progress, setSlices]
   );
 
   return <></>;
 }
+
+DonutChartAnimator.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  setSlices: PropTypes.func.isRequired,
+};

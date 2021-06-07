@@ -40,7 +40,7 @@ export default function DonutChartTest() {
       activeItems={activeItems}
       setActiveItem={(t) => setActiveItems([t])}
     >
-      <DonutChartCenter getView={(t) => t.value} />
+      <DonutChartCenter getView={(t) => `${t[0]?.key || ""} ${t[0]?.value || ""}`} />
       <DonutChartLabeler margin={30} getView={(t) => t.key} viewWidth={20} viewHeight={20} />
     </DonutChart>
   );

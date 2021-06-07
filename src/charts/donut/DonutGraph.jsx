@@ -39,19 +39,21 @@ export default function DonutGraph(props) {
         <ChartColors />
       </defs>
 
-      {slices.map((t, i) => {
-        return (
-          <DonutGraphSlice
-            key={i}
-            className={t.active ? "active" : ""}
-            center={center}
-            outerRadius={outerRadius * (t.active ? 1.1 : 1)}
-            innerRadius={innerRadius}
-            fromAngle={t.fromAngle}
-            toAngle={t.toAngle}
-          />
-        );
-      })}
+      <g>
+        {slices.map((t, i) => {
+          return (
+            <DonutGraphSlice
+              key={i}
+              className={t.active ? "active" : ""}
+              center={center}
+              outerRadius={outerRadius * (t.active ? 1.1 : 1)}
+              innerRadius={innerRadius}
+              fromAngle={t.fromAngle}
+              toAngle={t.toAngle}
+            />
+          );
+        })}
+      </g>
     </svg>
   );
 }

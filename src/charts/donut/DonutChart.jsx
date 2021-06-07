@@ -12,9 +12,11 @@ export default function DonutChart(props) {
   const { children } = props;
 
   const [slices, setSlices] = useState([]);
+
+  const activeKeys = activeItems.map((t) => t?.key).filter((t) => t !== undefined);
   const activedSlices = slices.map((t) => ({
     ...t,
-    active: activeItems?.includes(t.item),
+    active: activeKeys.includes(t.key),
   }));
 
   return (
@@ -46,11 +48,13 @@ DonutChart.propTypes = {
   innerRadius: PropTypes.number.isRequired,
   items: PropTypes.arrayOf(
     PropTypes.shape({
+      key: PropTypes.any.isRequired,
       value: PropTypes.number.isRequired,
     })
   ).isRequired,
   activeItems: PropTypes.arrayOf(
     PropTypes.shape({
+      key: PropTypes.any.isRequired,
       value: PropTypes.number.isRequired,
     })
   ),
