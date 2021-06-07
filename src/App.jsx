@@ -1,11 +1,11 @@
-import SplineGraphTest from "./SplineGraphTest";
+import SplineChartTest from "./SplineChartTest";
 
 import "./App.scss";
 
 export default function App() {
   return (
     <div className="app">
-      <SplineGraphTest />
+      <SplineChartTest />
     </div>
   );
 }

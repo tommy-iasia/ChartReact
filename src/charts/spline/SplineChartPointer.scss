@@ -1,4 +1,7 @@
+@import "../chart-colors.scss";
 @import "../../utilities/utility.scss";
+
+@use "scss:map";
 
 .spline-chart-pointer {
   @include absolute-fill;
@@ -8,31 +11,35 @@
     position: absolute;
     width: 1px;
     background-color: rgba(#626176, 0.6);
+    transition: all 0.2s;
   }
 
   > .point {
     position: absolute;
+    transition: all 0.2s;
 
     &::before {
       position: absolute;
-      left: -7px;
-      top: -7px;
-      width: 14px;
-      height: 14px;
-      border-radius: 7px;
-      background-color: rgba(#626176, 0.3);
+      left: -10px;
+      top: -10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      opacity: 0.3;
       content: "";
+      transition: all 0.2s;
     }
 
     &::after {
       position: absolute;
-      left: -3px;
-      top: -3px;
-      width: 6px;
-      height: 6px;
-      border-radius: 3px;
-      background-color: rgba(#626176, 0.3);
+      left: -7px;
+      top: -7px;
+      width: 10px;
+      height: 10px;
+      border: 2px solid #fff;
+      border-radius: 7px;
       content: "";
+      transition: all 0.2s;
     }
 
     > .label {
@@ -41,11 +48,20 @@
       transform: translateY(-50%);
 
       &.left {
-        right: 10px;
+        right: 15px;
       }
 
       &.right {
-        left: 10px;
+        left: 15px;
+      }
+    }
+
+    @for $i from 1 through 10 {
+      &.spline-#{$i} {
+        &::before,
+        &::after {
+          background-color: map-get(map-get($chart-colors, $i), start);
+        }
       }
     }
   }

@@ -16,8 +16,7 @@ export default function SplineChartPointer(props) {
 
   const areaRef = useRef(null);
   const mouseMoved = (e) => {
-    const { clientX, clientY } = e;
-    const mousePoint = new Point(clientX, clientY);
+    const mousePoint = new Point(e.clientX, e.clientY);
 
     const clientRectangle = new Rectangle(areaRef.current?.getBoundingClientRect());
     const relativePoint = mousePoint.minus(new Point(clientRectangle.left, clientRectangle.top));
@@ -27,7 +26,9 @@ export default function SplineChartPointer(props) {
       return;
     }
 
-    const values = splines.flatMap((t) => t.values.map((s) => ({ ...s, spline: t })));
+    const values = splines.flatMap((t, i) =>
+      t.values.map((s) => ({ ...s, spline: t, splineIndex: i }))
+    );
     const minimum = _.minBy(values, (t) => t.point.minus(relativePoint).length());
 
     setActive(minimum);
@@ -50,7 +51,7 @@ export default function SplineChartPointer(props) {
       ></div>
 
       <div
-        className="point"
+        className={`point ${active ? `spline-${active.splineIndex + 1}` : ""}`}
         style={{
           left: point.x,
           top: point.y,

@@ -3,10 +3,14 @@ import { Rectangle } from "./charts/Rectangle";
 import SplineChart from "./charts/spline/SplineChart";
 import SplineChartAxes from "./charts/spline/SplineChartAxes";
 import SplineChartGrid from "./charts/spline/SplineChartGrid";
-import SplineChartPointer from "./charts/spline/SplineChartPointer";
+import SplineChartRange from "./charts/spline/SplineChartRange";
 import SplineChartShadow from "./charts/spline/SplineChartShadow";
+import { useState } from "react";
 
-export default function SplineGraphTest() {
+export default function SplineChartTest() {
+  const [rangeStart, setRangeStart] = useState(0);
+  const [rangeEnd, setRangeEnd] = useState(600);
+
   return (
     <SplineChart
       width={600}
@@ -111,7 +115,12 @@ export default function SplineGraphTest() {
         ]}
       />
       <SplineChartGrid xAxis={[100, 200, 300, 400, 500]} yAxis={[0, 100, 200, 300]} />
-      <SplineChartPointer getLabel={(item, value) => `${item.key} ${value.x} ${value.y}`} />
+      <SplineChartRange
+        start={rangeStart}
+        setStart={setRangeStart}
+        end={rangeEnd}
+        setEnd={setRangeEnd}
+      />
     </SplineChart>
   );
 }
