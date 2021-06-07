@@ -35,10 +35,10 @@ export class Point {
   }
 
   rotate(angle) {
-    const fromRadian = Math.atan2(this.y, this.x);
+    const fromAngle = this.angle();
+    const toAngle = fromAngle + angle;
 
-    const angleRadian = (angle * Math.PI) / 180;
-    const toRadian = fromRadian + angleRadian;
+    const toRadian = (toAngle * Math.PI) / 180;
 
     const length = this.length();
 

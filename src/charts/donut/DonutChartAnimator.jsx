@@ -55,14 +55,16 @@ export default function DonutChartAnimator(props) {
 
   useEffect(
     () => {
-      if (nextSlices.length >= newSlices.length) {
-        setBeforeSlices(nextSlices.slice(0, newSlices.length));
-      } else {
+      if (nextSlices.length <= 0) {
+        setBeforeSlices(initialSlices);
+      } else if (nextSlices.length < newSlices.length) {
         const emptySlices = newSlices
           .slice(nextSlices.length)
           .map((t) => ({ ...t, fromAngle: 359.9, toAngle: 359.9 }));
 
         setBeforeSlices(nextSlices.concat(emptySlices));
+      } else {
+        setBeforeSlices(nextSlices.slice(0, newSlices.length));
       }
 
       setAfterSlices(newSlices);

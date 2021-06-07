@@ -14,7 +14,12 @@ export default function DonutChartTest() {
 
   useInterval(
     () => {
-      if (items.length < 8) {
+      if (items.length < 1) {
+        setItems([
+          { key: "AA", value: 1 },
+          { key: "BB", value: 3 },
+        ]);
+      } else if (items.length < 8) {
         const firstItem = items[0];
 
         setItems([
@@ -22,6 +27,8 @@ export default function DonutChartTest() {
           ...items.slice(1),
           { key: `H${items.length}`, value: 4 },
         ]);
+      } else {
+        setItems([]);
       }
     },
     1000,
