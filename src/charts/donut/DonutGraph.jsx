@@ -7,7 +7,7 @@ import { useRef } from "react";
 
 export default function DonutGraph(props) {
   const { width, height, outerRadius, innerRadius } = props;
-  const { slices, setActive } = props;
+  const { slices, activeSlices, setActiveSlices } = props;
 
   const chartRef = useRef(null);
   const mouseMoved = (e) => {
@@ -19,8 +19,8 @@ export default function DonutGraph(props) {
 
     const angle = relativePoint.angle();
 
-    const slice = slices.find((t) => angle >= t.fromAngle && angle <= t.toAngle);
-    setActive?.(slice);
+    const mousedSlices = slices.filter((t) => angle >= t.fromAngle && angle <= t.toAngle);
+    setActiveSlices?.(mousedSlices);
   };
 
   const center = new Point(width / 2, height / 2);
@@ -33,7 +33,7 @@ export default function DonutGraph(props) {
       viewBox={`0 0 ${width} ${height}`}
       ref={chartRef}
       onMouseMove={mouseMoved}
-      onMouseLeave={() => setActive?.(null)}
+      onMouseLeave={() => setActiveSlices?.([])}
     >
       <defs>
         <ChartColors />
@@ -41,12 +41,13 @@ export default function DonutGraph(props) {
 
       <g>
         {slices.map((t, i) => {
+          const active = activeSlices?.includes(t);
           return (
             <DonutGraphSlice
               key={i}
-              className={t.active ? "active" : ""}
+              className={active ? "active" : ""}
               center={center}
-              outerRadius={outerRadius * (t.active ? 1.1 : 1)}
+              outerRadius={outerRadius * (active ? 1.1 : 1)}
               innerRadius={innerRadius}
               fromAngle={t.fromAngle}
               toAngle={t.toAngle}
@@ -69,5 +70,11 @@ DonutGraph.propTypes = {
       toAngle: PropTypes.number.isRequired,
     })
   ).isRequired,
-  setActive: PropTypes.func,
+  activeSlices: PropTypes.arrayOf(
+    PropTypes.shape({
+      fromAngle: PropTypes.number.isRequired,
+      toAngle: PropTypes.number.isRequired,
+    })
+  ),
+  setActiveSlices: PropTypes.func,
 };

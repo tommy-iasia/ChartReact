@@ -1,94 +1,63 @@
 import _ from "lodash";
-import { ease } from "../easing";
+import { ease } from "../../animations/easing";
 import PropTypes from "prop-types";
-import { useInterval } from "../../utilities/effect";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAnimation } from "../../animations/animation";
 
 export default function DonutChartAnimator(props) {
-  const { items, setSlices } = props;
+  const { inputSlices, setOutputSlices } = props;
 
-  const total = _.sumBy(items, (t) => t.value);
-  const { slices: newSlices } = items.reduce(
-    (s, t) => {
-      const angle = 359.9 * (t.value / total);
-      return {
-        angle: s.angle + angle,
-        slices: [
-          ...s.slices,
-          {
-            key: t.key || "",
-            item: t,
-            fromAngle: s.angle,
-            toAngle: s.angle + angle,
-          },
-        ],
-      };
-    },
-    { angle: 0, slices: [] }
+  const [beforeSlices, setBeforeSlices] = useState(
+    inputSlices.map((t) => ({ ...t, toAngle: t.fromAngle }))
   );
 
-  const initialSlices = newSlices.map((t) => ({ ...t, toAngle: t.fromAngle }));
-  const [beforeSlices, setBeforeSlices] = useState(initialSlices);
+  const [afterSlices, setAfterSlices] = useState(inputSlices);
 
-  const [afterSlices, setAfterSlices] = useState(newSlices);
+  const [version, setVersion] = useState(0);
 
-  const getVersionText = (slices) => {
-    const texts = slices.map((t) => `${t.key}: ${t.fromAngle} - ${t.toAngle}`);
-    return texts.join(", ");
-  };
-
-  const newSlicesText = getVersionText(newSlices);
-
-  const [progress, setProgress] = useState(0);
-  useInterval(() => {
-    if (progress < 1) {
-      setProgress(Math.min(progress + 0.02, 1));
-    }
-  }, 10);
-
+  const progress = useAnimation(version, 500);
   const easedProgress = ease(progress);
-  const nextSlices = _.zip(beforeSlices, afterSlices).map(([s, t]) => ({
-    ...t,
-    fromAngle: (t.fromAngle - s.fromAngle) * easedProgress + s.fromAngle,
-    toAngle: (t.toAngle - s.toAngle) * easedProgress + s.toAngle,
-  }));
 
-  useEffect(
-    () => {
-      if (nextSlices.length <= 0) {
-        setBeforeSlices(initialSlices);
-      } else if (nextSlices.length < newSlices.length) {
-        const emptySlices = newSlices
-          .slice(nextSlices.length)
-          .map((t) => ({ ...t, fromAngle: 359.9, toAngle: 359.9 }));
+  const currentSlices = useMemo(
+    () =>
+      _.zip(beforeSlices, afterSlices).map(([s, t]) => ({
+        ...t,
+        fromAngle: (t.fromAngle - s.fromAngle) * easedProgress + s.fromAngle,
+        toAngle: (t.toAngle - s.toAngle) * easedProgress + s.toAngle,
+      })),
+    [beforeSlices, afterSlices, easedProgress]
+  );
 
-        setBeforeSlices(nextSlices.concat(emptySlices));
+  useEffect(() => setOutputSlices(currentSlices), [currentSlices, setOutputSlices]);
+
+  useEffect(() => {
+    if (inputSlices !== afterSlices) {
+      if (inputSlices.length === currentSlices.length) {
+        setBeforeSlices(currentSlices);
+      } else if (inputSlices.length > currentSlices.length) {
+        const nextBeforeSlices = _.zip(inputSlices, currentSlices).map(
+          ([s, t]) => t || { ...s, fromAngle: 359.9, toAngle: 359.9 }
+        );
+        setBeforeSlices(nextBeforeSlices);
       } else {
-        setBeforeSlices(nextSlices.slice(0, newSlices.length));
+        const nextBeforeSlices = currentSlices.slice(0, inputSlices.length);
+        setBeforeSlices(nextBeforeSlices);
       }
 
-      setAfterSlices(newSlices);
-
-      setProgress(0);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [newSlicesText]
-  );
-
-  useEffect(
-    () => setSlices(nextSlices),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [beforeSlices, afterSlices, progress, setSlices]
-  );
+      setAfterSlices(inputSlices);
+      setVersion((t) => t + 1);
+    }
+  }, [currentSlices, afterSlices, inputSlices]);
 
   return <></>;
 }
 
 DonutChartAnimator.propTypes = {
-  items: PropTypes.arrayOf(
+  inputSlices: PropTypes.arrayOf(
     PropTypes.shape({
-      value: PropTypes.number.isRequired,
+      fromAngle: PropTypes.number.isRequired,
+      toAngle: PropTypes.number.isRequired,
     })
   ).isRequired,
-  setSlices: PropTypes.func.isRequired,
+  setOutputSlices: PropTypes.func.isRequired,
 };

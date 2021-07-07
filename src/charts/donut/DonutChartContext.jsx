@@ -6,4 +6,5 @@ export const DonutChartContext = createContext({
   outerRadius: 0,
   innerRadius: 0,
   slices: [],
+  activeSlices: [],
 });

@@ -45,7 +45,7 @@ export default function DonutChartTest() {
       innerRadius={55}
       items={items}
       activeItems={activeItems}
-      setActiveItem={(t) => setActiveItems([t])}
+      setActiveItems={(t) => setActiveItems(t)}
     >
       <DonutChartCenter getView={(t) => `${t[0]?.key || ""} ${t[0]?.value || ""}`} />
       <DonutChartLabeler margin={30} getView={(t) => t.key} viewWidth={20} viewHeight={20} />

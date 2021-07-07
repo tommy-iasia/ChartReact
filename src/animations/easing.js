@@ -1,4 +1,4 @@
-import { Point } from "./Point";
+import { Point } from "../charts/Point";
 
 export const cubicBezier = (t, x1, y1, x2, y2) => {
   const point0 = new Point(0, 0);

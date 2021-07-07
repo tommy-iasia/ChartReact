@@ -1,42 +1,80 @@
+import _ from "lodash";
 import DonutChartAnimator from "./DonutChartAnimator";
 import { DonutChartContext } from "./DonutChartContext";
 import DonutGraph from "./DonutGraph";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import "./DonutChart.scss";
 
 export default function DonutChart(props) {
-  const { width, height, outerRadius, innerRadius } = props;
-  const { items, activeItems, setActiveItem } = props;
+  const { width, height, outerRadius, innerRadius, opacity } = props;
+  const { items, activeItems, setActiveItems } = props;
   const { children } = props;
 
-  const [slices, setSlices] = useState([]);
+  const rawSlices = useMemo(() => {
+    const total = _.sumBy(items, (t) => t.value) || 1;
+    const { slices } = items.reduce(
+      (s, t) => {
+        const angle = 359.9 * (t.value / total);
+        return {
+          angle: s.angle + angle,
+          slices: [
+            ...s.slices,
+            {
+              key: t.key || "",
+              item: t,
+              fromAngle: s.angle,
+              toAngle: s.angle + angle,
+            },
+          ],
+        };
+      },
+      { angle: 0, slices: [] }
+    );
 
-  const activeKeys = activeItems.map((t) => t?.key).filter((t) => t !== undefined);
-  const activedSlices = slices.map((t) => ({
-    ...t,
-    active: activeKeys.includes(t.key),
-  }));
+    return slices;
+  }, [items]);
+
+  const [animatedSlices, setAnimatedSlices] = useState(null);
+
+  const graphSlices = useMemo(() => animatedSlices || rawSlices, [animatedSlices, rawSlices]);
+
+  const activeSlices = useMemo(() => {
+    const activeKeys = activeItems?.map((t) => t.key) || [];
+    return graphSlices.filter((t) => activeKeys.includes(t.key));
+  }, [graphSlices, activeItems]);
 
   return (
-    <div className="donut-chart" style={{ width, height }}>
-      <DonutChartAnimator items={items} setSlices={setSlices} />
+    <div className="donut-chart" style={{ width, height, opacity }}>
+      <DonutChartAnimator inputSlices={rawSlices} setOutputSlices={setAnimatedSlices} />
 
       <DonutChartContext.Provider
-        value={{ width, height, outerRadius, innerRadius, slices: activedSlices }}
+        value={{
+          width,
+          height,
+          outerRadius,
+          innerRadius,
+          slices: graphSlices,
+          activeSlices,
+        }}
       >
-        <DonutGraph
-          width={width}
-          height={height}
-          outerRadius={outerRadius}
-          innerRadius={innerRadius}
-          slices={activedSlices}
-          setActive={(t) => setActiveItem?.(t?.item)}
-        />
-
         {children}
       </DonutChartContext.Provider>
+
+      <DonutGraph
+        width={width}
+        height={height}
+        outerRadius={outerRadius}
+        innerRadius={innerRadius}
+        slices={graphSlices}
+        activeSlices={activeSlices}
+        setActiveSlices={(t) => {
+          const activeKeys = t.map((s) => s.key);
+          const activeKeyItems = items.filter((s) => activeKeys.includes(s.key));
+          setActiveItems?.(activeKeyItems);
+        }}
+      />
     </div>
   );
 }
@@ -58,5 +96,6 @@ DonutChart.propTypes = {
       value: PropTypes.number.isRequired,
     })
   ),
-  setActiveItem: PropTypes.func,
+  setActiveItems: PropTypes.func,
+  opacity: PropTypes.number,
 };
