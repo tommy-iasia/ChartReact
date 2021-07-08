@@ -1,4 +1,4 @@
-export class SplineChartRange {
+export class Range {
   constructor(minimum, maximum) {
     this.minimum = minimum;
     this.maximum = maximum;

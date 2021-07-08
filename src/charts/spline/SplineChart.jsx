@@ -1,6 +1,7 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { Point } from "../Point";
+import { Range } from "../Range";
 import { Rectangle } from "../Rectangle";
 import SplineChartAnimator from "./SplineChartAnimator";
 import { SplineChartContext } from "./SplineChartContext";
@@ -17,27 +18,21 @@ export default function SplineChart(props) {
   const { children } = props;
 
   const viewObject = useEqualObject(view);
+  const rangeObject = useEqualObject(range);
 
-  const inputRange = useEqualObject(range);
-  const rangeObject = useMemo(() => {
-    return inputRange || getRange();
+  const coordinate = useMemo(() => {
+    return new SplineChartCoordinate(viewObject, rangeObject || getRange());
 
     function getRange() {
       const values = items.flatMap((t) => t.values);
       const xs = values.map((t) => t.x);
       const ys = values.map((t) => t.y);
 
-      return {
-        minimum: new Point(_.min(xs), _.min(ys)),
-        maximum: new Point(_.max(xs), _.max(ys)),
-      };
+      const minimum = new Point(_.min(xs), _.min(ys));
+      const maximum = new Point(_.max(xs), _.max(ys));
+      return new Range(minimum, maximum);
     }
-  }, [inputRange, items]);
-
-  const coordinate = useMemo(
-    () => new SplineChartCoordinate(viewObject, rangeObject),
-    [viewObject, rangeObject]
-  );
+  }, [viewObject, rangeObject, items]);
 
   const chartSplines = useMemo(
     () =>
@@ -87,14 +82,5 @@ SplineChart.propTypes = {
       disabled: PropTypes.bool,
     })
   ).isRequired,
-  range: PropTypes.shape({
-    minimum: PropTypes.shape({
-      x: PropTypes.number.isRequired,
-      y: PropTypes.number.isRequired,
-    }),
-    maximum: PropTypes.shape({
-      x: PropTypes.number.isRequired,
-      y: PropTypes.number.isRequired,
-    }),
-  }),
+  range: PropTypes.instanceOf(Range),
 };
