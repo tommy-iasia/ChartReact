@@ -1,7 +1,7 @@
 import DonutChart from "./charts/donut/DonutChart";
 import DonutChartCenter from "./charts/donut/DonutChartCenter";
 import DonutChartLabeler from "./charts/donut/DonutChartLabeler";
-import { useInterval } from "./utilities/effect";
+import { useInterval } from "./utilities/hooks";
 import { useState } from "react";
 
 export default function DonutChartTest() {
@@ -12,28 +12,24 @@ export default function DonutChartTest() {
     { key: "D", value: 5 },
   ]);
 
-  useInterval(
-    () => {
-      if (items.length < 1) {
-        setItems([
-          { key: "AA", value: 1 },
-          { key: "BB", value: 3 },
-        ]);
-      } else if (items.length < 8) {
-        const firstItem = items[0];
+  useInterval(() => {
+    if (items.length < 1) {
+      setItems([
+        { key: "AA", value: 1 },
+        { key: "BB", value: 3 },
+      ]);
+    } else if (items.length < 8) {
+      const firstItem = items[0];
 
-        setItems([
-          { key: firstItem.key, value: firstItem.value * 2 },
-          ...items.slice(1),
-          { key: `H${items.length}`, value: 4 },
-        ]);
-      } else {
-        setItems([]);
-      }
-    },
-    1000,
-    []
-  );
+      setItems([
+        { key: firstItem.key, value: firstItem.value * 2 },
+        ...items.slice(1),
+        { key: `H${items.length}`, value: 4 },
+      ]);
+    } else {
+      setItems([]);
+    }
+  }, 1000);
 
   const [activeItems, setActiveItems] = useState([]);
 

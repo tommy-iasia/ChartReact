@@ -36,14 +36,12 @@ export default function DonutChart(props) {
     return slices;
   }, [items]);
 
-  const [animatedSlices, setAnimatedSlices] = useState(null);
-
-  const graphSlices = useMemo(() => animatedSlices || rawSlices, [animatedSlices, rawSlices]);
+  const [animatedSlices, setAnimatedSlices] = useState([]);
 
   const activeSlices = useMemo(() => {
     const activeKeys = activeItems?.map((t) => t.key) || [];
-    return graphSlices.filter((t) => activeKeys.includes(t.key));
-  }, [graphSlices, activeItems]);
+    return animatedSlices.filter((t) => activeKeys.includes(t.key));
+  }, [activeItems, animatedSlices]);
 
   return (
     <div className="donut-chart" style={{ width, height, opacity }}>
@@ -55,7 +53,7 @@ export default function DonutChart(props) {
           height,
           outerRadius,
           innerRadius,
-          slices: graphSlices,
+          slices: animatedSlices,
           activeSlices,
         }}
       >
@@ -67,7 +65,7 @@ export default function DonutChart(props) {
         height={height}
         outerRadius={outerRadius}
         innerRadius={innerRadius}
-        slices={graphSlices}
+        slices={animatedSlices}
         activeSlices={activeSlices}
         setActiveSlices={(t) => {
           const activeKeys = t.map((s) => s.key);

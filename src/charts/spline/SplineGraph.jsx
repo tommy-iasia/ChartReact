@@ -3,19 +3,29 @@ import { Point } from "../Point";
 import PropTypes from "prop-types";
 import SplineGraphArea from "./SplineGraphArea";
 import SplineGraphLine from "./SplineGraphLine";
+import { Rectangle } from "../Rectangle";
+import { useEqualObject } from "../../utilities/hooks";
 
 export default function SplineGraph(props) {
-  const { width, height, splines, bottom } = props;
+  const { splines, view } = props;
+
+  const viewObject = useEqualObject(view);
 
   return (
-    <svg className="spline-graph" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <svg
+      className="spline-graph"
+      style={{ left: viewObject.left, top: viewObject.top }}
+      width={viewObject.width}
+      height={viewObject.height}
+      viewBox={`${viewObject.left} ${viewObject.top} ${viewObject.width} ${viewObject.height}`}
+    >
       <defs>
         <ChartColors />
       </defs>
 
       <g>
         {splines.map((t, i) => (
-          <SplineGraphArea key={i} points={t} bottom={bottom} />
+          <SplineGraphArea key={i} points={t} bottom={viewObject.bottom} />
         ))}
       </g>
 
@@ -29,8 +39,6 @@ export default function SplineGraph(props) {
 }
 
 SplineGraph.propTypes = {
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
   splines: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.instanceOf(Point))).isRequired,
-  bottom: PropTypes.number.isRequired,
+  view: PropTypes.instanceOf(Rectangle).isRequired,
 };

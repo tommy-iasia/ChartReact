@@ -8,30 +8,37 @@ import { useContext, useRef } from "react";
 import "./SplineChartPointer.scss";
 
 export default function SplineChartPointer(props) {
-  const { getLabel } = props;
+  const { active, setActive, getLabel } = props;
 
-  const { coordinate, splines, active, setActive } = useContext(SplineChartContext);
+  const { coordinate, splines } = useContext(SplineChartContext);
 
-  const point = active?.point || new Point(coordinate.rectangle.left, coordinate.rectangle.bottom);
+  const point = active?.point || new Point(coordinate.view.left, coordinate.view.bottom);
 
   const areaRef = useRef(null);
   const mouseMoved = (e) => {
     const mousePoint = new Point(e.clientX, e.clientY);
 
     const clientRectangle = new Rectangle(areaRef.current?.getBoundingClientRect());
-    const relativePoint = mousePoint.minus(new Point(clientRectangle.left, clientRectangle.top));
+    const clientOrigin = new Point(clientRectangle.left, clientRectangle.top);
 
-    if (!coordinate.rectangle.contains(relativePoint)) {
-      setActive?.(null);
-      return;
-    }
+    const relativePoint = mousePoint.minus(clientOrigin);
 
-    const values = splines.flatMap((t, i) =>
-      t.values.map((s) => ({ ...s, spline: t, splineIndex: i }))
-    );
+    const values = splines
+      .filter((t) => !t.item.disabled)
+      .flatMap((t, i) =>
+        t.values.map((s, j) => ({
+          item: t.item,
+          spline: t,
+          splineIndex: i,
+          point: s.point,
+          value: s.value,
+          valueIndex: j,
+        }))
+      );
+
     const minimum = _.minBy(values, (t) => t.point.minus(relativePoint).length());
 
-    setActive(minimum);
+    setActive?.(minimum);
   };
 
   return (
@@ -39,14 +46,14 @@ export default function SplineChartPointer(props) {
       className={`spline-chart-pointer ${active ? "active" : ""}`}
       ref={areaRef}
       onMouseMove={mouseMoved}
-      onMouseLeave={() => setActive(null)}
+      onMouseLeave={() => setActive?.(null)}
     >
       <div
         className="line"
         style={{
           left: point.x,
-          top: coordinate.rectangle.top,
-          height: coordinate.rectangle.height,
+          top: coordinate.view.top,
+          height: coordinate.view.height,
         }}
       ></div>
 
@@ -57,8 +64,8 @@ export default function SplineChartPointer(props) {
           top: point.y,
         }}
       >
-        <div className={`label ${point.x > coordinate.rectangle.center().x ? "left" : "right"}`}>
-          {active && getLabel(active.spline.item, active.value)}
+        <div className={`label ${point.x > coordinate.view.center().x ? "left" : "right"}`}>
+          {active && getLabel(active)}
         </div>
       </div>
     </div>
@@ -66,5 +73,7 @@ export default function SplineChartPointer(props) {
 }
 
 SplineChartPointer.propTypes = {
+  active: PropTypes.object,
+  setActive: PropTypes.func,
   getLabel: PropTypes.func.isRequired,
 };

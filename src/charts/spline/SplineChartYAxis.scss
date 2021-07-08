@@ -1,0 +1,35 @@
+@import "../../utilities/utility.scss";
+
+.spline-chart-y-axis {
+  @include absolute-fill;
+  pointer-events: none;
+
+  > .line {
+    position: absolute;
+    width: 1px;
+    background: #ccc;
+  }
+
+  > .label {
+    position: absolute;
+
+    &::before {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 5px;
+      height: 1px;
+      background-color: #ccc;
+      content: "";
+    }
+
+    > .content {
+      position: absolute;
+      right: 10px;
+      top: 0;
+      color: #888;
+      font-size: 12px;
+      transform: translateY(-50%);
+    }
+  }
+}

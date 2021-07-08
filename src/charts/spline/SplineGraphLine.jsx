@@ -5,9 +5,13 @@ import PropTypes from "prop-types";
 import "./SplineGraphLine.scss";
 
 export default function SplineGraphLine(props) {
-  const { className, points } = props;
+  const { points } = props;
 
-  return <path className={`spline-graph-line ${className || ""}`} d={getPath(points)} />;
+  if (points.length <= 2) {
+    return <path />;
+  }
+
+  return <path className="spline-graph-line" d={getPath(points)} />;
 }
 
 SplineGraphLine.propTypes = {

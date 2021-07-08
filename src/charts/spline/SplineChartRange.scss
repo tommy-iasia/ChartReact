@@ -3,31 +3,9 @@
 .spline-chart-range {
   @include absolute-fill;
 
-  .area {
+  .before,
+  .after {
     position: absolute;
-    background-color: rgba(#626176, 0.2);
-
-    &::before,
-    &::after {
-      position: absolute;
-      margin-top: -14px;
-      top: 50%;
-      width: 14px;
-      height: 28px;
-      background-color: rgba(#626176, 0.2);
-      content: "";
-    }
-
-    &::before {
-      left: -14px;
-      border-top-left-radius: 14px;
-      border-bottom-left-radius: 14px;
-    }
-
-    &::after {
-      right: -14px;
-      border-top-right-radius: 14px;
-      border-bottom-right-radius: 14px;
-    }
+    background-color: rgba(#ccc, 0.8);
   }
 }

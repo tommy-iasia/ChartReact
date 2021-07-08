@@ -5,7 +5,11 @@ import PropTypes from "prop-types";
 import "./SplineGraphArea.scss";
 
 export default function SplineGraphArea(props) {
-  const { className, points, bottom } = props;
+  const { points, bottom } = props;
+
+  if (points.length <= 2) {
+    return <path />;
+  }
 
   const linePath = getPath(points);
 
@@ -14,7 +18,7 @@ export default function SplineGraphArea(props) {
 
   return (
     <path
-      className={`spline-graph-area ${className || ""}`}
+      className="spline-graph-area"
       d={`${linePath} L ${lastPoint.x} ${bottom} L ${firstPoint.x} ${bottom} Z`}
     />
   );

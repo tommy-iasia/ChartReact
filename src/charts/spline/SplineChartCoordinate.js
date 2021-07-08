@@ -1,31 +1,50 @@
-import _ from "lodash";
 import { Point } from "../Point";
 
 export class SplineChartCoordinate {
-  constructor(rectangle, values) {
-    this.rectangle = rectangle;
-
-    this.values = values;
-
-    const xs = values.map((t) => t.x);
-    const ys = values.map((t) => t.y);
-    this.maximum = new Point(_.max(xs), _.max(ys));
-    this.minimum = new Point(_.min(xs), _.minBy(ys));
-
-    this.range = this.maximum.minus(this.minimum);
+  constructor(view, range) {
+    this.view = view;
+    this.range = range;
   }
 
   convert(value) {
-    return new Point(
-      this.rectangle.left + this.rectangle.width * ((value.x - this.minimum.x) / this.range.x),
-      this.rectangle.top + this.rectangle.height * (1 - (value.y - this.minimum.y) / this.range.y)
+    const x = this.convertX(value.x);
+    const y = this.convertY(value.y);
+    return new Point(x, y);
+  }
+  convertX(value) {
+    return (
+      this.view.left +
+      this.view.width *
+        ((value - this.range.minimum.x) / (this.range.maximum.x - this.range.minimum.x))
+    );
+  }
+  convertY(value) {
+    return (
+      this.view.top +
+      this.view.height *
+        (1 - (value - this.range.minimum.y) / (this.range.maximum.y - this.range.minimum.y))
     );
   }
 
   revert(location) {
-    return new Point(
-      ((location.x - this.rectangle.left) / this.rectangle.width) * this.range.x + this.minimum.x,
-      ((location.y - this.rectangle.top) / this.rectangle.height) * this.range.y + this.minimum.y
+    const x = this.revertX(location.x);
+    const y = this.revertY(location.y);
+
+    return new Point(x, y);
+  }
+  revertX(location) {
+    return (
+      ((location - this.view.left) / this.view.width) *
+        (this.range.maximum.x - this.range.minimum.x) +
+      this.range.minimum.x
+    );
+  }
+  revertY(location) {
+    return (
+      1 -
+      ((location - this.view.top) / this.view.height) *
+        (this.range.maximum.y - this.range.minimum.y) +
+      this.range.minimum.y
     );
   }
 }

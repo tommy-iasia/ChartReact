@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Point } from "../Point";
 import { SplineChartContext } from "./SplineChartContext";
 import PropTypes from "prop-types";
@@ -9,13 +10,19 @@ export default function SplineChartShadow(props) {
   const { value } = props;
 
   const { coordinate } = useContext(SplineChartContext);
-  const from = coordinate.convert(coordinate.minimum);
-  const to = coordinate.convert(new Point(coordinate.maximum.x, value));
+
+  const from = coordinate.convert(coordinate.range.minimum);
+  const to = coordinate.convert(new Point(coordinate.range.maximum.x, value));
 
   return (
     <div
       className="spline-chart-shadow"
-      style={{ left: from.x, top: to.y, width: to.x - from.x, height: from.y - to.y }}
+      style={{
+        left: _.clamp(from.x, coordinate.view.left, coordinate.view.right),
+        top: _.clamp(to.y, coordinate.view.top, coordinate.view.bottom),
+        width: _.clamp(to.x - from.x, 0, coordinate.view.width),
+        height: _.clamp(from.y - to.y, 0, coordinate.view.height),
+      }}
     ></div>
   );
 }

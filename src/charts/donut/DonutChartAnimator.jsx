@@ -15,7 +15,7 @@ export default function DonutChartAnimator(props) {
 
   const [version, setVersion] = useState(0);
 
-  const progress = useAnimation(version, 500);
+  const progress = useAnimation(version, 2000);
   const easedProgress = ease(progress);
 
   const currentSlices = useMemo(

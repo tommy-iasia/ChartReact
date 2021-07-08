@@ -4,7 +4,7 @@
   position: relative;
 
   .spline-graph {
-    @include absolute-fill;
+    position: absolute;
     z-index: 3;
   }
 

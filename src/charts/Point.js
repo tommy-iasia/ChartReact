@@ -44,4 +44,8 @@ export class Point {
 
     return new Point(length * Math.cos(toRadian), length * Math.sin(toRadian));
   }
+
+  equals(point) {
+    return this.x === point?.x && this.y === point?.y;
+  }
 }

@@ -14,6 +14,17 @@ export function useAsync(func, dependencies) {
   );
 }
 
+export function useEqualObject(object, equaller) {
+  const ref = useRef();
+
+  const equal = equaller ? equaller(object, ref.current) : object?.equals?.(ref.current);
+  if (!equal) {
+    ref.current = object;
+  }
+
+  return ref.current;
+}
+
 export function useTimeout(func, length, dependencies) {
   useEffect(
     () => {

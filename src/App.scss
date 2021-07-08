@@ -2,4 +2,5 @@
 
 .app {
   @include flex-center;
+  flex-direction: column;
 }

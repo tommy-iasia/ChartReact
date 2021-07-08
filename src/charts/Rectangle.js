@@ -30,4 +30,15 @@ export class Rectangle {
       rectangle.top + rectangle.height > this.top
     );
   }
+
+  equals(rectangle) {
+    return (
+      this.left === rectangle?.left &&
+      this.top === rectangle?.top &&
+      this.right === rectangle?.right &&
+      this.bottom === rectangle?.bottom &&
+      this.width === rectangle?.width &&
+      this.height === rectangle?.height
+    );
+  }
 }

@@ -8,11 +8,12 @@ import { useContext, useRef, useState } from "react";
 import "./SplineChartRange.scss";
 
 export default function SplineChartRange(props) {
-  const { start, setStart, end, setEnd } = props;
+  const { start, end, setRange } = props;
 
   const { coordinate } = useContext(SplineChartContext);
-  const { x: startX } = coordinate.convert(new Point(start, 0));
-  const { x: endX } = coordinate.convert(new Point(end, 0));
+
+  const startX = coordinate.convertX(Math.max(start, coordinate.range.minimum.x));
+  const endX = coordinate.convertX(Math.min(end, coordinate.range.maximum.x));
 
   const areaRef = useRef(null);
   const [downCursor, setDownCursor] = useState(null);
@@ -24,17 +25,21 @@ export default function SplineChartRange(props) {
     const relativePoint = mousePoint.minus(new Point(clientRectangle.left, clientRectangle.top));
 
     const pointValue = coordinate.revert(relativePoint);
-    const clampedValue = _.clamp(pointValue.x, coordinate.minimum.x, coordinate.maximum.x);
+    const clampedValue = _.clamp(
+      pointValue.x,
+      coordinate.range.minimum.x,
+      coordinate.range.maximum.x
+    );
 
     const startDistance = Math.abs(startX - relativePoint.x);
     const endDistance = Math.abs(endX - relativePoint.x);
 
     if (startDistance <= endDistance) {
       setDownCursor("start");
-      setStart(clampedValue);
+      setRange(clampedValue, end);
     } else {
       setDownCursor("end");
-      setEnd(clampedValue);
+      setRange(start, clampedValue);
     }
 
     e.preventDefault();
@@ -55,25 +60,27 @@ export default function SplineChartRange(props) {
     const relativePoint = mousePoint.minus(new Point(clientRectangle.left, clientRectangle.top));
 
     const pointValue = coordinate.revert(relativePoint);
-    const clampedValue = _.clamp(pointValue.x, coordinate.minimum.x, coordinate.maximum.x);
+    const clampedValue = _.clamp(
+      pointValue.x,
+      coordinate.range.minimum.x,
+      coordinate.range.maximum.x
+    );
 
     switch (downCursor) {
       case "start":
         if (clampedValue <= end) {
-          setStart(clampedValue);
+          setRange(clampedValue, end);
         } else {
-          setStart(end);
-          setEnd(clampedValue);
+          setRange(end, clampedValue);
           setDownCursor("end");
         }
         break;
 
       case "end":
         if (pointValue.x >= start) {
-          setEnd(clampedValue);
+          setRange(start, clampedValue);
         } else {
-          setEnd(start);
-          setStart(clampedValue);
+          setRange(clampedValue, start);
           setDownCursor("start");
         }
         break;
@@ -109,12 +116,21 @@ export default function SplineChartRange(props) {
       onMouseLeave={mouseLeft}
     >
       <div
-        className="area"
+        className="before"
         style={{
-          left: startX,
-          width: endX - startX,
-          top: coordinate.rectangle.top,
-          height: coordinate.rectangle.height,
+          left: coordinate.view.left,
+          width: _.clamp(startX - coordinate.view.left, 0, coordinate.view.width),
+          top: coordinate.view.top,
+          height: coordinate.view.height,
+        }}
+      ></div>
+      <div
+        className="after"
+        style={{
+          left: _.clamp(endX, coordinate.view.left, coordinate.view.right),
+          width: coordinate.view.right - _.clamp(endX, coordinate.view.left, coordinate.view.right),
+          top: coordinate.view.top,
+          height: coordinate.view.height,
         }}
       ></div>
     </div>
@@ -123,7 +139,6 @@ export default function SplineChartRange(props) {
 
 SplineChartRange.propTypes = {
   start: PropTypes.number,
-  setStart: PropTypes.func.isRequired,
   end: PropTypes.number,
-  setEnd: PropTypes.func.isRequired,
+  setRange: PropTypes.func.isRequired,
 };
